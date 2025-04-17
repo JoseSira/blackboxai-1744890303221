@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Roleplay</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos personalizados */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #0f172a, #1e293b);
+            min-height: 100vh;
+        }
+
+        .game-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .balance-glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px #10b981, 0 0 10px #10b981, 0 0 15px #10b981;
+            }
+            to {
+                box-shadow: 0 0 10px #059669, 0 0 20px #059669, 0 0 30px #059669;
+            }
+        }
+
+        .game-container {
+            display: none;
+        }
+
+        .game-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos para el checkpoint */
+        .checkpoint-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-gray-100">
+    <!-- Checkpoint Inicial -->
+    <div id="checkpoint" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+        <div class="text-center">
+            <div class="checkpoint-pulse mb-8">
+                <i class="fas fa-map-marker-alt text-6xl text-emerald-500"></i>
+            </div>
+            <h2 class="text-3xl font-bold mb-4">Bienvenido al Casino</h2>
+            <p class="text-gray-400 mb-6">Haz clic para entrar</p>
+            <button id="enterCasino" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                Entrar al Casino
+            </button>
+        </div>
+    </div>
+
+    <!-- Interfaz Principal del Casino -->
+    <div id="casinoInterface" class="hidden min-h-screen">
+        <!-- Header con Balance y Controles -->
+        <header class="bg-gray-800 shadow-lg py-4 px-6 fixed w-full top-0 z-40">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-emerald-500">
+                    <i class="fas fa-dice mr-2"></i>Casino Roleplay
+                </h1>
+                <div class="flex items-center space-x-4">
+                    <div class="balance-glow bg-gray-900 rounded-lg px-4 py-2">
+                        <span class="text-gray-400">Balance:</span>
+                        <span id="playerBalance" class="font-bold text-emerald-500">$0</span>
+                    </div>
+                    <button id="rechargeButton" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                        <i class="fas fa-wallet mr-2"></i>Recargar
+                    </button>
+                    <button id="closeButton" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                        <i class="fas fa-times mr-2"></i>Cerrar
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenido Principal -->
+        <main class="container mx-auto pt-24 px-6 pb-12">
+            <!-- Selección de Juegos -->
+            <div id="gameSelection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <!-- Blackjack -->
+                <div class="game-card bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg" 
+                         alt="Blackjack" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Blackjack</h3>
+                        <p class="text-gray-400 mb-4">Juega contra el dealer y llega a 21</p>
+                        <button class="game-button w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                                data-game="blackjack">
+                            <i class="fas fa-play mr-2"></i>Jugar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Poker -->
+                <div class="game-card bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg" 
+                         alt="Poker" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Poker</h3>
+                        <p class="text-gray-400 mb-4">Demuestra tus habilidades en el póker</p>
+                        <button class="game-button w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                                data-game="poker">
+                            <i class="fas fa-play mr-2"></i>Jugar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mines -->
+                <div class="game-card bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg" 
+                         alt="Mines" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Mines</h3>
+                        <p class="text-gray-400 mb-4">Evita las minas y multiplica tu apuesta</p>
+                        <button class="game-button w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                                data-game="mines">
+                            <i class="fas fa-play mr-2"></i>Jugar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Aviator -->
+                <div class="game-card bg-gray-800 rounded-xl overflow-hidden shadow-lg">
+                    <img src="https://images.pexels.com/photos/1871508/pexels-photo-1871508.jpeg" 
+                         alt="Aviator" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Aviator</h3>
+                        <p class="text-gray-400 mb-4">Retira antes del crash y gana grande</p>
+                        <button class="game-button w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
+                                data-game="aviator">
+                            <i class="fas fa-play mr-2"></i>Jugar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedores de Juegos -->
+            <!-- Blackjack -->
+            <div id="blackjackGame" class="game-container bg-gray-800 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Blackjack</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="dealer-area bg-gray-900 rounded-lg p-4">
+                        <h3 class="text-lg font-bold mb-2">Dealer</h3>
+                        <div id="dealerCards" class="flex gap-2"></div>
+                    </div>
+                    <div class="player-area bg-gray-900 rounded-lg p-4">
+                        <h3 class="text-lg font-bold mb-2">Tu Mano</h3>
+                        <div id="playerCards" class="flex gap-2"></div>
+                    </div>
+                </div>
+                <div class="controls mt-6 flex gap-4">
+                    <button id="hitButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Pedir
+                    </button>
+                    <button id="standButton" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-hand mr-2"></i>Plantarse
+                    </button>
+                </div>
+            </div>
+
+            <!-- Poker -->
+            <div id="pokerGame" class="game-container bg-gray-800 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Poker</h2>
+                <div class="poker-table bg-green-900 rounded-full p-8 relative">
+                    <!-- Contenido del poker -->
+                </div>
+            </div>
+
+            <!-- Mines -->
+            <div id="minesGame" class="game-container bg-gray-800 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Mines</h2>
+                <div class="mines-grid grid grid-cols-5 gap-4">
+                    <!-- Grid de minas generado dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Aviator -->
+            <div id="aviatorGame" class="game-container bg-gray-800 rounded-xl p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Aviator</h2>
+                <div class="aviator-graph bg-gray-900 rounded-lg p-4 h-64">
+                    <!-- Gráfico del multiplicador -->
+                </div>
+                <div class="controls mt-4">
+                    <button id="cashoutButton" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-lg">
+                        <i class="fas fa-money-bill-wave mr-2"></i>Retirar
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Recarga -->
+    <div id="rechargeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold mb-4">Recargar Saldo</h3>
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2">Cantidad a recargar:</label>
+                <input type="number" id="rechargeAmount" 
+                       class="w-full bg-gray-700 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                       min="1000" step="1000">
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button id="cancelRecharge" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">
+                    Cancelar
+                </button>
+                <button id="confirmRecharge" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificaciones -->
+    <div id="notifications" class="fixed bottom-4 right-4 space-y-4"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
