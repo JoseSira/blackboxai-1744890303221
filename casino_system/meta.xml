@@ -1,0 +1,65 @@
+<meta>
+    <info author="BLACKBOXAI" name="Casino System" description="Sistema de casino para MTA:SA con múltiples juegos" version="1.0.0" type="script"/>
+    
+    <!-- Scripts del Servidor -->
+    <script src="lua/config.lua" type="server"/>
+    <script src="lua/casino.lua" type="server"/>
+    <script src="lua/games/blackjack.lua" type="server"/>
+    <script src="lua/games/poker.lua" type="server"/>
+    <script src="lua/games/mines.lua" type="server"/>
+    <script src="lua/games/aviator.lua" type="server"/>
+
+    <!-- Archivos del Cliente -->
+    <file src="html/index.html"/>
+    <file src="html/script.js"/>
+
+    <!-- Exportaciones del Servidor -->
+    <export function="getConfig" type="server"/>
+    <export function="updateConfig" type="server"/>
+    <export function="isValidBet" type="server"/>
+    <export function="calculateWinProbability" type="server"/>
+    <export function="checkSecurityLimits" type="server"/>
+    <export function="getRewardMultiplier" type="server"/>
+
+    <!-- Exportaciones de Juegos -->
+    <!-- Blackjack -->
+    <export function="startBlackjackGame" type="server"/>
+    <export function="hitBlackjack" type="server"/>
+    <export function="standBlackjack" type="server"/>
+
+    <!-- Poker -->
+    <export function="createPokerTable" type="server"/>
+    <export function="joinPokerTable" type="server"/>
+    <export function="leavePokerTable" type="server"/>
+
+    <!-- Mines -->
+    <export function="startMinesGame" type="server"/>
+    <export function="revealMineCell" type="server"/>
+    <export function="cashOutMines" type="server"/>
+
+    <!-- Aviator -->
+    <export function="joinAviatorGame" type="server"/>
+    <export function="cashOutAviator" type="server"/>
+    <export function="getCurrentMultiplier" type="server"/>
+    <export function="isRoundActive" type="server"/>
+
+    <!-- Configuración de ACL (Access Control List) -->
+    <aclrequest>
+        <right name="general.ModifyOtherObjects" access="true"/>
+        <right name="function.kickPlayer" access="true"/>
+        <right name="function.setPlayerMoney" access="true"/>
+        <right name="function.getPlayerMoney" access="true"/>
+        <right name="function.spawnPlayer" access="true"/>
+        <right name="function.setElementPosition" access="true"/>
+        <right name="function.setElementRotation" access="true"/>
+        <right name="function.setElementDimension" access="true"/>
+        <right name="function.setElementInterior" access="true"/>
+    </aclrequest>
+
+    <!-- Configuración mínima requerida -->
+    <min_mta_version server="1.5.6-9.18728"></min_mta_version>
+    
+    <!-- Dependencias -->
+    <include resource="spawnmanager"/>
+    <include resource="scoreboard"/>
+</meta>
